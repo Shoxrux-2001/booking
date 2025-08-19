@@ -1,62 +1,46 @@
-import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant/features/home/repo/food_rpo.dart';
-import 'package:restaurant/features/home/viewmodel/food_viewmodel.dart';
-import 'package:restaurant/features/presentation/routes/app_router.dart';
+import 'package:restaurant/features/auth/presentation/injection_container.dart'
+    as di;
+import 'package:restaurant/features/auth/presentation/screens/on_boarding_screen.dart';
+import 'package:restaurant/features/history/presentation/screens/provider/booking_provider.dart';
+import 'package:restaurant/features/home/presentation/bloc/restaurant_bloc.dart';
+import 'package:restaurant/features/home/presentation/bloc/restaurant_event.dart';
 import 'package:restaurant/firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await di.init();
+
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => BookingProvider())],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => di.sl<RestaurantBloc>()..add(LoadRestaurants()),
+          ),
+        ],
+        child: const MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initializeApp(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
-          );
-        }
-        if (snapshot.hasError) {
-          log("Firebase initialization error: ${snapshot.error}");
-          return const MaterialApp(
-            home: Scaffold(body: Center(child: Text('Error initializing app'))),
-          );
-        }
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (_) => FoodViewModel(FoodRepository()),
-            ),
-          ],
-          child: MaterialApp.router(
-            title: 'Restaurant Booking',
-            theme: ThemeData(primarySwatch: Colors.green),
-            routerConfig: appRouter,
-            debugShowCheckedModeBanner: false,
-          ),
-        );
-      },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: OnBoardingScreen(),
     );
-  }
-
-  Future<void> _initializeApp() async {
-    try {
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      log("Firebase initialized successfully");
-    } catch (e) {
-      log("Error initializing Firebase: $e");
-      throw Exception("Failed to initialize Firebase: $e");
-    }
   }
 }

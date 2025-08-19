@@ -1,0 +1,21 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'auth_event.freezed.dart';
+
+@freezed
+class AuthEvent with _$AuthEvent {
+  const factory AuthEvent.signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) = _SignUp;
+
+  const factory AuthEvent.signIn({
+    required String email,
+    required String password,
+  }) = _SignIn;
+
+  const factory AuthEvent.googleSignIn() = _GoogleSignIn;
+
+  const factory AuthEvent.reset() = _Reset;
+}

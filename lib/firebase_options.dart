@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -33,7 +30,10 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -45,6 +45,16 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyC_28gNcDQBs1MShupNRrtb88ivANLpFbg',
+    appId: '1:410073535328:web:4a6d893dfab127b1098405',
+    messagingSenderId: '410073535328',
+    projectId: 'my-restaurant-34711',
+    authDomain: 'my-restaurant-34711.firebaseapp.com',
+    storageBucket: 'my-restaurant-34711.firebasestorage.app',
+    measurementId: 'G-8VCV4LVW8H',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBkZV_gfV9KGhdR7DTW_LRbxoWTb0e9eKg',
@@ -60,16 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '410073535328',
     projectId: 'my-restaurant-34711',
     storageBucket: 'my-restaurant-34711.firebasestorage.app',
+    androidClientId: '410073535328-q4264s50ge9ip47401m1u3757h3uphr2.apps.googleusercontent.com',
+    iosClientId: '410073535328-jljtjoe7qmcqd4k8u3iufnpmpilclo8v.apps.googleusercontent.com',
     iosBundleId: 'com.example.restaurant',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyC_28gNcDQBs1MShupNRrtb88ivANLpFbg',
-    appId: '1:410073535328:web:4a6d893dfab127b1098405',
-    messagingSenderId: '410073535328',
-    projectId: 'my-restaurant-34711',
-    authDomain: 'my-restaurant-34711.firebaseapp.com',
-    storageBucket: 'my-restaurant-34711.firebasestorage.app',
-    measurementId: 'G-8VCV4LVW8H',
   );
 }
